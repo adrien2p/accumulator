@@ -1,0 +1,5 @@
+{
+	"requestPerBatch": "20",
+	"logEveryMs": "100",
+	"delayBetweenBatch": "0"
+}

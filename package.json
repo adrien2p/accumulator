@@ -1,0 +1,19 @@
+{
+  "name": "node-millions-ddos",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "type": "module",
+  "engines": {
+    "node": "17.6.0"
+  },
+  "scripts": {
+    "start": "node --experimental-modules ./src/index.mjs ./data-test.json ./config.json ./proxy.json",
+    "start-server:test": "node test-server.mjs"
+  },
+  "author": "Adrien de peretti <adrien.deperetti@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fake-useragent": "^1.0.1"
+  }
+}

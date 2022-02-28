@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "host": "localhost",
+      "port": "3000",
+      "path": "/"
+    },
+    {
+      "host": "localhost",
+      "port": "3001",
+      "path": "/"
+    },
+    {
+      "host": "localhost",
+      "port": "3002",
+      "path": "/"
+    }
+  ]
+}
