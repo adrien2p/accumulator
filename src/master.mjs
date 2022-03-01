@@ -29,7 +29,7 @@ async function getData() {
 
 async function getProxies() {
 	if (!proxiesPath) return;
-	return JSON.parse(await readFile(new URL(proxiesPath, import.meta.url)));
+	return (await readFile(new URL(proxiesPath, import.meta.url))).toString();
 }
 
 function verifyUserConfig(userConfig) {
@@ -123,7 +123,7 @@ export async function startMaster() {
 		cluster.fork({
 			USER_CONFIG: JSON.stringify(preparedUserConfig),
 			DATA: JSON.stringify(data),
-			PROXIES: JSON.stringify(proxies),
+			PROXIES: proxies,
 			CONFIG_MESSAGE: JSON.stringify(configMessages)
 		});
 	});

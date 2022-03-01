@@ -1,8 +1,8 @@
 {
   "data": [
     {
-      "host": "localhost",
-      "port": "3000",
+      "host": "88.138.164.255",
+      "port": "80",
       "path": "/"
     },
     {

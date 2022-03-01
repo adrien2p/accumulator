@@ -14,7 +14,7 @@ export function startWorker() {
 
 	const data = JSON.parse(process.env.DATA);
 	const userConfig = JSON.parse(process.env.USER_CONFIG);
-	const proxies = JSON.parse(process.env.PROXIES);
+	const proxies = process.env.PROXIES && process.env.PROXIES.split('\\n') || [];
 	const _configMessages = JSON.parse(process.env.CONFIG_MESSAGE);
 	if (_configMessages.length) {
 		configMessages.push(..._configMessages);

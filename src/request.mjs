@@ -9,12 +9,10 @@ function selectProxy(proxies) {
 	return proxies[proxyIndex];
 }
 
-export function request(host, path, port, userConfig, proxies) {
+export async function request(host, path, port, userConfig, proxies) {
 	const queryString = querystring.stringify({
 		data: crypto.randomBytes(20).toString('hex')
 	});
-
-	const proxy = selectProxy(proxies);
 
 	const options = {
 		hostname: host,
@@ -22,16 +20,20 @@ export function request(host, path, port, userConfig, proxies) {
 		port,
 		method: 'GET',
 		headers: {
-			Connection: 'keep-alive',
+			"Proxy-Connections": 'keep-alive',
 			userAgent: fakeUserAgent()
-		},
-		proxy: `http://${proxy.ip}:${proxy.port}`
+		}
 	};
 
-	/*if (proxies && proxies.length) {
+	if (proxies && proxies.length) {
 		const proxy = selectProxy(proxies);
-		options.proxy = `http://${proxy.ip}:${proxy.port}`;
-	}*/
+		const proxyString = `http://${proxy}`;
+		options.setHost = false;
+		options.lookup = () => void 0;
+		options.proxy = proxyString;
+		options.headers.origin = proxyString;
+		options.headers.host = options.headers.Host = proxyString;
+	}
 
 	const data = { host, port, path, requests: 0, errors: 0, success: 0, headers: [] };
 
@@ -47,7 +49,7 @@ export function request(host, path, port, userConfig, proxies) {
 			process.send({ cmd: DATA_MSG, data });
 		});
 
-		req.on('error', (e) => {
+		req.on('error', () => {
 			++data.requests;
 			++data.errors;
 			process.send({ cmd: DATA_MSG, data });
