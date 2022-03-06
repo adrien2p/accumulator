@@ -6,7 +6,7 @@ import querystring from 'querystring';
 import { DATA_MSG } from './constants.mjs';
 import { SocksProxyAgent } from "socks-proxy-agent";
 
-export async function request(targetUrl, userConfig) {
+export function request(targetUrl, userConfig) {
 	const queryString = querystring.stringify({
 		data: crypto.randomBytes(20).toString('hex')
 	});
@@ -15,7 +15,6 @@ export async function request(targetUrl, userConfig) {
 	const options = {
 		...parsedUrl,
 		query: queryString,
-		agent: new SocksProxyAgent(proxy),
 		headers: {
 			'Keep-Alive': 'timeout=3600',
 			'Connection': 'keep-alive'
@@ -24,7 +23,7 @@ export async function request(targetUrl, userConfig) {
 
 	const proxies = userConfig.socksProxies;
 	if (proxies?.length) {
-		const proxyIndex = Math.rand(Math.random() * (proxies.length - 1));
+		const proxyIndex = Math.round(Math.random() * (proxies.length - 1));
 		options.agent = new SocksProxyAgent(proxies[proxyIndex]);
 	}
 
@@ -35,12 +34,12 @@ export async function request(targetUrl, userConfig) {
 		requests: 0,
 		errors: 0,
 		success: 0,
-		headers: []
+		isDown: false
 	};
 
 	const httpOrHttps = options.protocol === 'https:' ? https : http;
 	for (let i = 0; i < userConfig.requestPerBatch; ++i) {
-		const req = httpOrHttps.get(options, res => {
+		httpOrHttps.get(options, res => {
 			++data.requests;
 			if (res.statusCode >= 200 && res.statusCode < 300) {
 				++data.success;
@@ -49,15 +48,13 @@ export async function request(targetUrl, userConfig) {
 			}
 
 			process.send({ cmd: DATA_MSG, data });
-		});
-
-		req.on('error', (e) => {
-			console.log(e);
+		}).on('error', (err) => {
 			++data.requests;
 			++data.errors;
+			if (err.connect === true) {
+				data.isDown = true;
+			}
 			process.send({ cmd: DATA_MSG, data });
 		});
-
-		req.end();
 	}
 }
