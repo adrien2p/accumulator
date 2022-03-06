@@ -26,46 +26,68 @@
 
 # Getting started
 
-You can just use this repository as a template to get the directory structure and its content
-loaded.
+Check your node version, it must be 17.6.0, otherwise you can use `nvm` as follow
+
+```bash
+nvm install 17
+nvm use 17
+```
+
+#### Optional anonymisation
+
+> The following steps are optional and only needed if you want to use the anonymisation
+
+First, you need to install `Tor` on your machine since the requests will transit through
+it in order to get anonymous requests.
+
+```bash
+# On Mac OS 
+brew install tot
+```
+
+Or follow the link [here](https://tb-manual.torproject.org/installation/) or
+[here](https://community.torproject.org/onion-services/setup/install/)
+
+you can then find the configuration file located here (on mac os)
+`/usr/local/etc/tor/torrc.sample`. You can remove the `.sample` to make it effective.
+
+Finally, you can start your tor service
+
+```bash
+# On Mac OS
+brew services start tor
+```
 
 # Configuration
 
-Start by duplicate `data-test.json`and update its content to put the websites info in it.
-Here is the example `data-test.json`.
+Start by populating `targets.json` with the websites you want to attack.
+Here is how to fill the json file
+
 ````json
 {
     "data": [
-        {
-            "host": "localhost",
-            "port": "3000",
-            "path": "/"
-        },
-        {
-            "host": "localhost",
-            "port": "3001",
-            "path": "/"
-        },
-        {
-            "host": "localhost",
-            "port": "3002",
-            "path": "/"
-        }
+      "http://0.0.0.0:80"
     ]
 }
 ````
 
 Update the `config.json` file to customise the attack.
 Here is the example `config.json`.
+
 ```json
 {
     "requestPerBatch": "20",
     "logEveryMs": "100",
-    "delayBetweenBatch": "0"
+    "delayBetweenBatch": "0",
+    "socksProxies": []
 }
 ```
 
-# Running a DDoS
+> The `socksProxies` configuration is optional and correspond to the anonymisation using TOR as explained
+> in the [Getting started](#getting-started) section. It correspond to a set of Tor sockets
+> that will be used as proxy for the requests.
+
+# Running
 
 ## Tests
 
@@ -76,19 +98,13 @@ npm run start-server:test
 npm run start
 ```
 
+this command `npm run start-server:test` will start a local sever on which you can try to
+send some requests. Find your public IP and open a port on your router to redirect
+the request to your local server. Then, add your public IP and port prefixed with
+the protocol in `target.json` file.
+
 ## Production
 
-After having updated your config in `config.json` and filled your `data.json`
-add a new script in your `package.json` such as
-
-```json
-"scripts": {
-  "start:prod": "node index.mjs ./data.json ./config.json"
-}
-```
-
-Then run the new script added above.
-
-```bash
-npm run start:prod
-```
+To really start the attack, you only need to fill your `target.json` file with 
+the websites you want to attack and eventually update your `config.json` file.
+then run the command `npm run start` only.

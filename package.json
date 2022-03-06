@@ -8,12 +8,13 @@
     "node": "17.6.0"
   },
   "scripts": {
-    "start": "node --experimental-modules ./src/index.mjs ./data-test.json ./config.json ./proxies.txt",
+    "start": "node --experimental-modules ./src/index.mjs targets.json ./config.json",
     "start-server:test": "node test-server.mjs"
   },
   "author": "Adrien de peretti <adrien.deperetti@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "fake-useragent": "^1.0.1"
+    "fake-useragent": "^1.0.1",
+    "socks-proxy-agent": "^6.2.0-beta.0"
   }
 }

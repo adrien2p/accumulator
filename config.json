@@ -1,5 +1,6 @@
 {
 	"requestPerBatch": "20",
 	"logEveryMs": "100",
-	"delayBetweenBatch": "0"
+	"delayBetweenBatch": "0",
+	"socksProxies": ["socks5h://127.0.0.1:9050"]
 }

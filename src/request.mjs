@@ -1,44 +1,46 @@
 import http from 'http';
+import https from 'https';
+import url from 'url';
 import crypto from "crypto";
 import querystring from 'querystring';
-import fakeUserAgent from 'fake-useragent';
 import { DATA_MSG } from './constants.mjs';
+import { SocksProxyAgent } from "socks-proxy-agent";
 
-function selectProxy(proxies) {
-	const proxyIndex = Math.round(Math.random() * (proxies.length - 1));
-	return proxies[proxyIndex];
-}
-
-export async function request(host, path, port, userConfig, proxies) {
+export async function request(targetUrl, userConfig) {
 	const queryString = querystring.stringify({
 		data: crypto.randomBytes(20).toString('hex')
 	});
 
+	const parsedUrl = url.parse(targetUrl);
 	const options = {
-		hostname: host,
-		path: `${path}?${queryString}`,
-		port,
-		method: 'GET',
+		...parsedUrl,
+		query: queryString,
+		agent: new SocksProxyAgent(proxy),
 		headers: {
-			"Proxy-Connections": 'keep-alive',
-			userAgent: fakeUserAgent()
+			'Keep-Alive': 'timeout=3600',
+			'Connection': 'keep-alive'
 		}
 	};
 
-	if (proxies && proxies.length) {
-		const proxy = selectProxy(proxies);
-		const proxyString = `http://${proxy}`;
-		options.setHost = false;
-		options.lookup = () => void 0;
-		options.proxy = proxyString;
-		options.headers.origin = proxyString;
-		options.headers.host = options.headers.Host = proxyString;
+	const proxies = userConfig.socksProxies;
+	if (proxies?.length) {
+		const proxyIndex = Math.rand(Math.random() * (proxies.length - 1));
+		options.agent = new SocksProxyAgent(proxies[proxyIndex]);
 	}
 
-	const data = { host, port, path, requests: 0, errors: 0, success: 0, headers: [] };
+	const data = {
+		host: parsedUrl.host,
+		port: parsedUrl.port,
+		path: parsedUrl.path,
+		requests: 0,
+		errors: 0,
+		success: 0,
+		headers: []
+	};
 
+	const httpOrHttps = options.protocol === 'https:' ? https : http;
 	for (let i = 0; i < userConfig.requestPerBatch; ++i) {
-		const req = http.request(options, res => {
+		const req = httpOrHttps.get(options, res => {
 			++data.requests;
 			if (res.statusCode >= 200 && res.statusCode < 300) {
 				++data.success;
@@ -49,7 +51,8 @@ export async function request(host, path, port, userConfig, proxies) {
 			process.send({ cmd: DATA_MSG, data });
 		});
 
-		req.on('error', () => {
+		req.on('error', (e) => {
+			console.log(e);
 			++data.requests;
 			++data.errors;
 			process.send({ cmd: DATA_MSG, data });
