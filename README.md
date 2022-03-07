@@ -17,9 +17,9 @@
 ---
 
 <div align="center">
-  <a href="https://github.com/adrien2p/ddos-cluster/issues"><img src="https://img.shields.io/github/issues/adrien2p/ddos-clusterr?style=flat-square" alt="issues" height="18"></a>
-  <a href="https://github.com/adrien2p/ddos-cluster/blob/main/LICENSE"><img src="https://img.shields.io/github/license/adrien2p/ddos-cluster?style=flat-square" alt="licence" height="18"></a>
-  <a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20Run%20a%20DDoS%20attack%20in%20a%20NodeJS%20cluster&url=https://github.com/adrien2p/ddos-cluster"><img src="https://badgen.net/badge/icon/twitter?icon=twitter&label=Share%20it%20on" alt="twitter" height="18"></a>
+  <a href="https://github.com/adrien2p/ddos_cluster/issues"><img src="https://img.shields.io/github/issues/adrien2p/ddos_cluster?style=flat-square" alt="issues" height="18"></a>
+  <a href="https://github.com/adrien2p/ddos_cluster/blob/main/LICENSE"><img src="https://img.shields.io/github/license/adrien2p/ddos_cluster?style=flat-square" alt="licence" height="18"></a>
+  <a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20Run%20a%20DDoS%20attack%20in%20a%20NodeJS%20cluster&url=https://github.com/adrien2p/ddos_cluster"><img src="https://badgen.net/badge/icon/twitter?icon=twitter&label=Share%20it%20on" alt="twitter" height="18"></a>
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs welcome!" />
   </a>
 </div>
