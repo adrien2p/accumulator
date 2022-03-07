@@ -102,7 +102,7 @@ export async function startMaster() {
 	if (preparedUserConfig.socksProxies?.length) {
 		for (const proxy of preparedUserConfig.socksProxies) {
 			await checkIfTorIsStartedOrExit(proxy).catch(() => {
-				console.error('ERROR! Unable to reach Tor. Please, check that your tor service is started. Alternatively, check your config.json "socksProxy" value.');
+				console.error('ERROR! Unable to reach Tor. Please, check that your tor service is started. Alternatively, check your config.json "socksProxies" value.');
 				process.exit(1);
 			});
 		}
