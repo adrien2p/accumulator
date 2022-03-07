@@ -1,7 +1,7 @@
 <!--lint disable awesome-list-item-->
 <div align="center">
   <p align="center">
-    <img alt="DDoS Clsuter" src="./assets/DDoS_Cluster-logopng.png"/>
+    <img alt="DDoS Clsuter" src="./assets/DDoS_Cluster-logopng.png" height="250"/>
   </p>
   
   <h1>DDoS Cluster</h1>
@@ -42,7 +42,7 @@ it in order to get anonymous requests.
 
 ```bash
 # On Mac OS 
-brew install tot
+brew install tor
 ```
 
 Or follow the link [here](https://tb-manual.torproject.org/installation/) or
@@ -55,8 +55,10 @@ Finally, you can start your tor service
 
 ```bash
 # On Mac OS
-brew services start tor
+tor & # & make tor running as a background process
 ```
+
+alternativaly, you can also install the [Tor browser](https://www.torproject.org/download/)
 
 # Configuration
 
@@ -66,7 +68,7 @@ Here is how to fill the json file
 ````json
 {
     "data": [
-      "http://0.0.0.0:80"
+      "http://127.0.0.1:80"
     ]
 }
 ````
@@ -76,10 +78,11 @@ Here is the example `config.json`.
 
 ```json
 {
-    "requestPerBatch": "20",
-    "logEveryMs": "100",
-    "delayBetweenBatch": "0",
-    "socksProxies": []
+    "requestPerBatch": 20,
+	"logEveryMs": 150,
+	"delayBetweenBatch": 500,
+	"cpuUsageRatio": 1,
+	"socksProxies": ["socks5h://127.0.0.1:9050"]
 }
 ```
 

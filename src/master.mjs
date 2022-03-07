@@ -76,8 +76,6 @@ function aggregateWorkersStats(workerData) {
 }
 
 export async function startMaster() {
-	await checkIfTorIsStartedOrExit();
-
 	const argv = process.argv.splice(2, 3);
 
 	if (!argv.length) {
@@ -90,7 +88,6 @@ export async function startMaster() {
 	console.info('using targets from path', targetsPath);
 	console.info('using config from path', configPath);
 
-
 	const { data } = await getTargets();
 	const userConfig = await getConfig();
 	verifyUserConfig(userConfig);
@@ -101,6 +98,15 @@ export async function startMaster() {
 		delayBetweenBatch: 0,
 		...(userConfig)
 	};
+
+	if (preparedUserConfig.socksProxies?.length) {
+		for (const proxy of preparedUserConfig.socksProxies) {
+			await checkIfTorIsStartedOrExit(proxy).catch(() => {
+				console.error('ERROR! Unable to reach Tor. Please, check that your tor service is started. Alternatively, check your config.json "socksProxy" value.');
+				process.exit(1);
+			});
+		}
+	}
 
 	const numCPUs = cpus().length;
 	const numCpuToUse = Math.round((userConfig.cpuUsageRatio ?? 1) * numCPUs);
