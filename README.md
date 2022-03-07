@@ -111,3 +111,7 @@ the protocol in `target.json` file.
 To really start the attack, you only need to fill your `target.json` file with 
 the websites you want to attack and eventually update your `config.json` file.
 then run the command `npm run start` only.
+
+# Contribute :ballot_box:
+
+Contributions are welcome! You can look at the contribution [guidelines](./CONTRIBUTING.md)
