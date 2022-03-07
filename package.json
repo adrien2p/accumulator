@@ -14,10 +14,6 @@
   "author": "Adrien de peretti <adrien.deperetti@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.88.2",
-    "socks-proxy-agent": "^6.2.0-beta.0",
-    "socks5-http-client": "^1.0.4",
-    "socks5-https-client": "^1.2.1",
     "tor-request": "^3.1.0"
   }
 }
