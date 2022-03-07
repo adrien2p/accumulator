@@ -1,7 +1,7 @@
 {
   "name": "node-millions-ddos",
   "version": "0.0.0",
-  "description": ":rocket: Run DDoS with nodejs using cluster and with/without Tor for anonymisation",
+  "description": ":rocket: Run DDoS with nodejs using cluster and with/without Tor for anonymisation :see_no_evil:",
   "keywords": ["nodejs", "ddos", "tor", "ddos-attacks", "onion", "ddos-tool"],
   "main": "index.mjs",
   "type": "module",
