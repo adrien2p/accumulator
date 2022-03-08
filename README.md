@@ -78,7 +78,7 @@ Here is the example `config.json`.
 
 ```json
 {
-    "requestPerBatch": 20,
+	"requestPerBatch": 20,
 	"logEveryMs": 150,
 	"delayBetweenBatch": 500,
 	"cpuUsageRatio": 1,
