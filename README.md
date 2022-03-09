@@ -1,13 +1,10 @@
 <!--lint disable awesome-list-item-->
 <div align="center">
-  <p align="center">
-    <img alt="DDoS Clsuter" src="./assets/DDoS_Cluster-logopng.png" height="250"/>
-  </p>
   
-  <h1>DDoS Cluster</h1>
+  <h1>Accumulator</h1>
   
   <p>
-       :rocket: Run DDoS with nodejs using cluster and with/without Tor for anonymisation :see_no_evil:
+       🚀 Send a load of requests with nodejs using cluster and with/without Tor for anonymisation 🙈
   </p>
   
   <a href="https://www.buymeacoffee.com/adriendeperetti" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
@@ -19,7 +16,6 @@
 <div align="center">
   <a href="https://github.com/adrien2p/ddos_cluster/issues"><img src="https://img.shields.io/github/issues/adrien2p/ddos_cluster?style=flat-square" alt="issues" height="18"></a>
   <a href="https://github.com/adrien2p/ddos_cluster/blob/main/LICENSE"><img src="https://img.shields.io/github/license/adrien2p/ddos_cluster?style=flat-square" alt="licence" height="18"></a>
-  <a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20Run%20a%20DDoS%20attack%20in%20a%20NodeJS%20cluster&url=https://github.com/adrien2p/ddos_cluster"><img src="https://badgen.net/badge/icon/twitter?icon=twitter&label=Share%20it%20on" alt="twitter" height="18"></a>
     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs welcome!" />
   </a>
 </div>
@@ -66,7 +62,7 @@ alternativaly, you can also install the [Tor browser](https://www.torproject.org
 
 # Configuration
 
-Start by populating `targets.json` with the websites you want to attack.
+Start by populating `targets.json` with the websites you want to test.
 Here is how to fill the json file
 
 ````json
@@ -77,7 +73,7 @@ Here is how to fill the json file
 }
 ````
 
-Update the `config.json` file to customise the attack.
+Update the `config.json` file to customise the test.
 Here is the example `config.json`.
 
 ```json
@@ -98,7 +94,7 @@ Here is the example `config.json`.
 
 ## Tests
 
-Run the following commands to be able to launch your servers and the DDoS attack on it.
+Run the following commands to be able to launch your servers and the load test on it.
 
 ```bash
 npm run start-server:test
@@ -112,8 +108,8 @@ the protocol in `target.json` file.
 
 ## Production
 
-To really start the attack, you only need to fill your `target.json` file with 
-the websites you want to attack and eventually update your `config.json` file.
+To really start the load test, you only need to fill your `target.json` file with 
+the websites you want to test and eventually update your `config.json` file.
 then run the command `npm run start` only.
 
 # Contribute :ballot_box:
