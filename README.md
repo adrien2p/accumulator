@@ -24,6 +24,10 @@
   </a>
 </div>
 
+> :warning: Disclamer, This repo has been created for an educative
+> purpose. I am not related to any person who
+> might use this project for the wrong reason. :warning:
+
 # Getting started
 
 Check your node version, it must be 17.6.0, otherwise you can use `nvm` as follow
